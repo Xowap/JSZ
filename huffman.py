@@ -1,20 +1,19 @@
 #!/usr/bin/python
 # vim: fileencoding=utf8 :
 
+# Copyright 2011 Rémy Sanchez <remy.sanchez (a)_ hyperthese.net>
+# Under the terms of the WTFPL
+
+from binhelp import *
+
 def tokenize(string):
 	tokens = []
-	# http://www.quackit.com/javascript/javascript_reserved_words.cfm (to complete)
-	# trier la liste par ordre de longueur
-	keywords = ("break", "continue", "do", "for", "import", "new", "this", "void", "case", "default", "else", "function", "return", "typeof", "while", "comment", "delete", "export", "if", "label", "switch", "var", "with", "include", "in")
 	keywords = ('break', 'continue', 'do', 'for', 'import', 'new', 'this', 'void', 'case', 'default', 'else', 'function', 'in', 'return', 'typeof', 'while', 'comment', 'delete', 'export', 'if', 'label', 'switch', 'var', 'with', 'abstract', 'implements', 'protected', 'boolean', 'instanceOf', 'public', 'byte', 'int', 'short', 'char', 'interface', 'static', 'double', 'long', 'synchronized', 'false', 'native', 'throws', 'final', 'null', 'transient', 'float', 'package', 'true', 'goto', 'private', 'catch', 'enum', 'throw', 'class', 'extends', 'try', 'const', 'finally', 'debugger', 'super', 'alert', 'eval', 'Link', 'outerHeight', 'scrollTo', 'Anchor', 'FileUpload', 'location', 'outerWidth', 'Select', 'Area', 'find', 'Location', 'Packages', 'self', 'arguments', 'focus', 'locationbar', 'pageXoffset', 'setInterval', 'Array', 'Form', 'Math', 'pageYoffset', 'setTimeout', 'assign', 'Frame', 'menubar', 'parent', 'status', 'blur', 'frames', 'MimeType', 'parseFloat', 'statusbar', 'Boolean', 'Function', 'moveBy', 'parseInt', 'stop', 'Button', 'getClass', 'moveTo', 'Password', 'String', 'callee', 'Hidden', 'name', 'personalbar', 'Submit', 'caller', 'history', 'NaN', 'Plugin', 'sun', 'captureEvents', 'History', 'navigate', 'print', 'taint', 'Checkbox', 'home', 'navigator', 'prompt', 'Text', 'clearInterval', 'Image', 'Navigator', 'prototype', 'Textarea', 'clearTimeout', 'Infinity', 'netscape', 'Radio', 'toolbar', 'close', 'innerHeight', 'Number', 'ref', 'top', 'closed', 'innerWidth', 'Object', 'RegExp', 'toString', 'confirm', 'isFinite', 'onBlur', 'releaseEvents', 'unescape', 'constructor', 'isNan', 'onError', 'Reset', 'untaint', 'Date', 'java', 'onFocus', 'resizeBy', 'unwatch', 'defaultStatus', 'JavaArray', 'onLoad', 'resizeTo', 'valueOf', 'document', 'JavaClass', 'onUnload', 'routeEvent', 'watch', 'Document', 'JavaObject', 'open', 'scroll', 'window', 'Element', 'JavaPackage', 'opener', 'scrollbars', 'Window', 'escape', 'length', 'Option', 'scrollBy')
 	offset = 0
 
 	i = 0
 	while i < len(string):
 		cnt = False
-
-		#if i % 100 == 0:
-			#print "offset %d" % i
 
 		for w in keywords:
 			if string[i:i+len(w)] == w:
@@ -98,61 +97,24 @@ def tree_stats(distrib, tree):
 
 	print "Total %d bits / %f octets" %  (total, total/8)
 
-def _tobinrep(val, size):
-	return bin(val)[2:].zfill(size)
-
-def _totruebin(string):
-	from math import ceil
-	out = bytearray()
-
-	leftout = len(string) % 8
-	out += chr(leftout)
-
-	#print leftout
-
-	for i in range(0, int(ceil(len(string) / 8)) + 1):
-		chunk = string[i * 8:(i + 1) * 8]
-		#print chunk
-
-		if len(chunk) < 8:
-			chunk += "0" * (8 - len(chunk))
-
-		val = int(chunk, 2)
-		out += chr(val)
-
-	return out
-
-def _fromtruebin(b):
-	leftout = b[0]
-
-	out = ""
-
-	for c in b[1:]:
-		out += _tobinrep(c, 8)
-
-	if leftout > 0:
-		out = out[:-leftout]
-
-	return out
-
 def mkbintree(tree):
 	out = ""
 
 	# Start with the size of tree
-	out += _tobinrep(len(tree), 16)
+	out += tobinrep(len(tree), 16)
 
 	for (k, v) in tree.items():
 		k = k.encode("utf8")
 
 		# key_s
-		out += _tobinrep(len(k), 4)
+		out += tobinrep(len(k), 4)
 
 		# val_s
-		out += _tobinrep(len(v), 6)
+		out += tobinrep(len(v), 6)
 
 		# key
 		for c in k:
-			out += _tobinrep(ord(c), 8)
+			out += tobinrep(ord(c), 8)
 
 		# val
 		out += v
@@ -176,36 +138,3 @@ def encode(tokens, tree):
 	for t in tokens:
 		s += tree[t]
 	return s
-
-if __name__ ==  "__main__":
-	import codecs
-	t = tokenize(codecs.open("./jquery-1.5.1.min.js", "r", "utf-8").read())
-	#t = tokenize(u"Ecrivons autre chose...")
-	print "tokenized"
-	d = stats(t)
-	print "distribution ok"
-	tree = mktree(d)
-	print "tree ok"
-
-	def print_node(node, indent = ""):
-		if node != None:
-			print "%s- %d (%s)" % (indent, node.value, node.symbol)
-			print_node(node.left, indent + " ")
-			print_node(node.right, indent + " ")
-
-	from pprint import pprint
-	pprint(tree_to_bin(tree))
-
-	#print mkbintree(tree_to_bin(tree))
-
-	#bintree = _totruebin(mkbintree(tree))
-	#print " ".join([hex(v) for v in bintree])
-	#print _fromtruebin(bintree)
-
-	enc = encode(t, tree_to_bin(tree))
-	#print enc
-	#print _totruebin(enc)
-	#print _fromtruebin(_totruebin(enc))
-
-	from template import parse
-	parse("/tmp/lena.bmp", "/tmp/lena.out.js", tree = reptree(tree), data = _totruebin(enc))

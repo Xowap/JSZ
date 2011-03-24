@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # vim: fileencoding=utf8 :
 
+# Copyright 2011 Rémy Sanchez <remy.sanchez (a)_ hyperthese.net>
+# Under the terms of the WTFPL
+
 def parse(inp, out, tree, data):
 	f = open(inp, "r")
 	tpl = f.read()

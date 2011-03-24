@@ -1,7 +1,10 @@
+/**
+ * Copyright 2011 Rémy Sanchez <remy.sanchez (a)_ hyperthese.net>
+ * Under the terms of WTFPL
+ */
+
 function CharPointer(str) {
-	var ptr = 8;
-	var l = str.charCodeAt(0);
-	var max = str.length * 8 - l;
+	var ptr = 8, l = str.charCodeAt(0), max = str.length * 8 - l;
 	return function() {
 		if (ptr >= max) throw 0;
 		return str.charCodeAt(Math.floor(ptr / 8)) & (128 >> (ptr++ % 8));
@@ -40,31 +43,9 @@ function huffval(tree) {
  * Alright, Javascript is not very cooperative with binary data. Too bad.
  */
 
-function createXhrObject()
-{
-	if (window.XMLHttpRequest)
-		return new XMLHttpRequest();
-
-	if (window.ActiveXObject)
-	{
-		var names = [
-			"Msxml2.XMLHTTP.6.0",
-			"Msxml2.XMLHTTP.3.0",
-			"Msxml2.XMLHTTP",
-			"Microsoft.XMLHTTP"
-				];
-		for(var i in names)
-		{
-			try{ return new ActiveXObject(names[i]); }
-			catch(e){}
-		}
-	}
-	return null; // not supported
-}
-
 function getData() {
 	var url = document.getElementById('jsz').getAttribute('src');
-	var req = new createXhrObject();
+	var req = new XMLHttpRequest();
 	req.open('GET', url, false);
 	req.overrideMimeType('text/plain; charset=x-user-defined');
 	req.send(null);
