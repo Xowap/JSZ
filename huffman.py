@@ -98,7 +98,7 @@ def tree_stats(distrib, tree):
 	print "Total %d bits / %f octets" %  (total, total/8)
 
 def mkbintree(tree):
-	out = ""
+	out = BinString()
 
 	# Start with the size of tree
 	out += tobinrep(len(tree), 16)
@@ -134,7 +134,7 @@ def reptree_target(node):
 		return "c() ? (" + reptree_target(node.right) + " : " + reptree_target(node.left) + ")"
 
 def encode(tokens, tree):
-	s = ""
+	s = BinString()
 	for t in tokens:
 		s += tree[t]
 	return s

@@ -22,6 +22,7 @@ parser.add_option("-i", "--input", dest="input", help="File to compress")
 parser.add_option("-o", "--output", dest="output", help="Write compressed file into")
 parser.add_option("-c", "--charset", dest="charset", default="utf-8", help="Input file charset")
 parser.add_option("-t", "--template", dest="template", default="./template.js", help="Template file that includes decompression code")
+parser.add_option("-p", "--print-tree", dest="print_tree", default=True, help="Prints the tree that is written into Javascript", action="store_false")
 
 (o, args) = parser.parse_args()
 
@@ -53,11 +54,13 @@ d = stats(t)
 tree = mktree(d)
 enc = encode(t, tree_to_bin(tree))
 
-
 ##
 # Save the template
 ##
 
 from template import parse
 from binhelp import *
-parse(o.template, o.output, tree = reptree(tree), data = totruebin(enc))
+parse(o.template, o.output, tree = reptree(tree), data = enc.encode())
+
+if not o.print_tree:
+	print reptree(tree)
