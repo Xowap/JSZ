@@ -3,11 +3,30 @@
  * Under the terms of WTFPL
  */
 
+function dec(str) {
+	var out = [];
+	for(var i in str) {
+		out.push(str.charCodeAt(i) & 255);
+	}
+	return out;
+}
+
 function CharPointer(str) {
-	var ptr = 8, l = str.charCodeAt(0), max = str.length * 8 - l;
+	var ptr = 8, l = str[0], max = str.length * 8 - l;
+
+	var n = (str[2] << 8) | str[1];
+	console.log(n);
+
+	ptr += 8 * (4 * n + 2);
+
+	for(var i=3; i < n * 4; i++) {
+		var idx = str[i++] | (str[i++] << 8) | (str[i++] << 16) | (str[i] << 24);
+		str[4 * n + 3 + idx] = 47;
+	}
+
 	return function() {
 		if (ptr >= max) throw 0;
-		return str.charCodeAt(Math.floor(ptr / 8)) & (128 >> (ptr++ % 8));
+		return str[Math.floor(ptr / 8)] & (128 >> (ptr++ % 8));
 	}
 }
 
@@ -58,17 +77,14 @@ function getData() {
 
 // Inputs
 var huf = huffval(t);
-var d = getData();
+var d = dec(getData());
 
 c = CharPointer(d);
 
-start = (new Date()).getTime();
 str = "";
 try {
 	while(true) str += huf(c);
 } catch(ex) {
-	stop = (new Date()).getTime();
-	//console.log(ex);
-	document.write(str);
+	document.write("<pre>"+str+"</pre>");
+	eval(str);
 }
-//console.log(stop - start);

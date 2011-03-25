@@ -82,10 +82,26 @@ class BinString(object):
 		return out
 
 	def encode(self):
+		from struct import pack
 		out = bytearray()
 
 		# number of trailing useless bits
 		out.append((8 - len(self) % 8) % 8)
+
+		# escape comment ends
+		b = self.bytes
+		places = []
+		for i in range(1, len(b)):
+			if b[i] == 47:
+				if b[i - 1] == 42:
+					b[i] = 42
+					places.append(i)
+					print "bad = %d" % i
+
+		print "bad string found %d times" % len(places)
+		out += pack("H", len(places))
+		for i in range(0, len(places)):
+			out += pack("I", places[i])
 
 		out += self.bytes
 		return out

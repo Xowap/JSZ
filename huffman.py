@@ -123,7 +123,7 @@ def mkbintree(tree):
 
 def reptree(node):
 	if node.symbol is not None:
-		return "'" + node.symbol.replace("\\", "\\\\").replace("'", "\\'").replace('\n', '\\n') + "'"
+		return "'" + node.symbol.replace("\\", "\\\\").replace("'", "\\'").replace('\n', '\\n').replace(r"c", "'+'c'+'") + "'"
 	else:
 		return "c" + reptree(node.right) + ":" + reptree(node.left)
 
