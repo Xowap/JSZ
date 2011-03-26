@@ -30,25 +30,6 @@ function CharPointer(str) {
 	}
 }
 
-function tobin(str) {
-	c = CharPointer(str);
-
-	str = ""
-	try {
-		var i = 0;
-		for(var j = 0; j < 32000; j++) {
-			str += c() ? "1" : "0";
-			if(++i % 8 == 0) {
-				str += "<br />";
-			}
-		}
-	} catch(ex) {
-		// pass
-	}
-
-	return str;
-}
-
 /**
  * Alright, Javascript is not very cooperative with binary data. Too bad.
  */
@@ -62,21 +43,14 @@ function getData() {
 	if (req.status != 200) return '';
 
 	var f = req.responseText;
-
 	return f.substring(4, f.search(/ \*\*\//));
 }
 
-// Inputs
-var d = dec(getData());
-
-//document.write("<pre>"+tobin(d)+"</pre>");
-
-c = CharPointer(d);
-
+var c = CharPointer(dec(getData()));
 str = "";
+
 try {
 	while(true) str += t(c);
 } catch(ex) {
-	document.write("<pre>"+str+"</pre>");
 	eval(str);
 }

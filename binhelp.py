@@ -96,9 +96,7 @@ class BinString(object):
 				if b[i - 1] == 42:
 					b[i] = 42
 					places.append(i)
-					print "bad = %d" % i
 
-		print "bad string found %d times" % len(places)
 		out += pack("H", len(places))
 		for i in range(0, len(places)):
 			out += pack("I", places[i])
