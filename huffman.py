@@ -121,17 +121,14 @@ def mkbintree(tree):
 
 	return out
 
-def reptree(node):
-	if node.symbol is not None:
-		return "'" + node.symbol.replace("\\", "\\\\").replace("'", "\\'").replace('\n', '\\n').replace(r"c", "'+'c'+'") + "'"
-	else:
-		return "c" + reptree(node.right) + ":" + reptree(node.left)
+def reptree(node, charset = 'utf-8'):
+	from json import JSONEncoder
+	enc = JSONEncoder(encoding = charset)
 
-def reptree_target(node):
 	if node.symbol is not None:
-		return "'" + node.symbol.replace("\\", "\\\\").replace("'", "\\'") + "'"
+		return enc.encode(node.symbol)
 	else:
-		return "c() ? (" + reptree_target(node.right) + " : " + reptree_target(node.left) + ")"
+		return "c()?" + reptree(node.right) + ":" + reptree(node.left)
 
 def encode(tokens, tree):
 	s = BinString()

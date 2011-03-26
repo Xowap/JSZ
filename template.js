@@ -36,7 +36,7 @@ function tobin(str) {
 	str = ""
 	try {
 		var i = 0;
-		while(true) {
+		for(var j = 0; j < 32000; j++) {
 			str += c() ? "1" : "0";
 			if(++i % 8 == 0) {
 				str += "<br />";
@@ -47,15 +47,6 @@ function tobin(str) {
 	}
 
 	return str;
-}
-
-String.prototype.r = function() {
-	return this.split("").reverse().join("")
-}
-
-function huffval(tree) {
-	eval("r = function(c) { return " + tree.r().replace(/c(?!')/g, "?)(c").r() + "; }");
-	return r;
 }
 
 /**
@@ -76,14 +67,15 @@ function getData() {
 }
 
 // Inputs
-var huf = huffval(t);
 var d = dec(getData());
+
+//document.write("<pre>"+tobin(d)+"</pre>");
 
 c = CharPointer(d);
 
 str = "";
 try {
-	while(true) str += huf(c);
+	while(true) str += t(c);
 } catch(ex) {
 	document.write("<pre>"+str+"</pre>");
 	eval(str);

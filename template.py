@@ -21,9 +21,9 @@ def parse(inp, out, tree, data):
 	f.write(vb)
 	f.write(' **/\n')
 
-	f.write('var t="')
-	f.write(tree.replace(u'\\', u'\\\\').replace(u'"', u'\\"').encode('utf-8'))
-	f.write('";\n\n')
+	f.write('var t=')
+	f.write("function(c){return " + tree + ";}")
+	f.write('\n\n')
 
 	f.write(tpl)
 	f.close()
