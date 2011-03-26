@@ -63,4 +63,9 @@ from binhelp import *
 parse(o.template, o.output, tree = reptree(tree), data = enc.encode())
 
 if not o.print_tree:
-	print reptree(tree)
+	from json import JSONEncoder
+	e = JSONEncoder(encoding = o.charset)
+
+	print "Tree:"
+	for (k, v) in tree_to_bin(tree).items():
+		print "%-20s %s" % (e.encode(k), v)

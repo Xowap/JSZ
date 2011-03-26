@@ -9,16 +9,10 @@ def parse(inp, out, tree, data):
 	tpl = f.read()
 	f.close()
 
-	vb = bytearray()
-	for b in data:
-		if b == ord('"') or b == ord('\\'):
-			vb.append(ord("\\"))
-		vb.append(b)
-
 	f = open(out, "wb")
 
 	f.write('/** ')
-	f.write(vb)
+	f.write(data)
 	f.write(' **/\n')
 
 	f.write('var t=')
