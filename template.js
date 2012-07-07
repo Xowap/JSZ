@@ -1,8 +1,6 @@
 /**
  * Copyright 2011 Rémy Sanchez <remy.sanchez (a)_ hyperthese.net>
  * Under the terms of WTFPL
- *
- * And I'm testing git
  */
 
 function dec(str) {
